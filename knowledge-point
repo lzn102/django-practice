@@ -1,0 +1,52 @@
+# 查看本次迁移数据后数据库中添加的信息
+python manage.py sqlmigrate polls 0001(迁移次数)
+
+
+# 模型更改三步骤
+change models.py
+Python manage.py makemigrations
+python manage.py migrate
+
+
+# 调用Python shell
+python manage.py shell
+
+
+# 在shell中查看更改数据库
+from app.models import model (导入创建模型)
+
+model.objects.all() 查看该模型下所有生成的对象
+
+q = model(parameter1="", parameter2="") 用模型创建数据
+
+q.save() 用save方法保存数据到数据库
+
+q.id 查看创建的数据的数据库id,有些参数引用不用加(),比如id,model的参数等等调用不用加()
+
+model.objects.filter() 通过过滤器查询特定的数据,列出一些参数:"__"双下划线应该相当于引用参数的属性
+    id=1 通过id查询
+    parameter__startswith="what" 通过模型对象参数的开头字符串查询,如查询what字符串开头的object(对象)
+
+model.objects.get() 通过输入与参数的数据相同的值来查询对对象的某个参数,举例:
+    id=1 通过查询id获取对象的参数
+    pk=1 相当于id=1,用于主键精确查找
+    parameter__year=timezone.now().year 通过与当前时区相同年份来获取对象的参数,__year表示参数创建年份
+
+model.objects.get(pk=1).choice_set.all() 查询与对象的参数相关联的值的集合(ForeignKey关联的两个值)
+
+parameter.choice_set.create(parameter1='', parameter2='') 创建相关联的值的内容
+
+parameter.choice_set.count() 查询关联值的内容总数量
+
+parameter.choice_set.filter() 通过过滤器查询关联值的内容
+
+parameter.choice_set.filter().delete() 删除过滤器查询的关联值的内容
+
+参数和它相关联的值可以相互访问,用它们各自的的对象访问即可,双下划线__可以隔离任意层数的关联,每层加__即可
+
+
+# 时区设置,在设置文件中更改所在时区后
+使用timezone.now()代替datetime.datetime.now()后能更加正确的表示所在时区的时间(时区不同导致的时间不同)
+
+
+
