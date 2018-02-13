@@ -14,9 +14,11 @@ class Question(models.Model):
     # DateTimeField函数在问题创建时自动生成当前时间
     pub_date = models.DateTimeField('date published')
     # 返回对象的表示为字符串,如果不设置,查看该模型的objects.all()显示的是"object(id)",这样不利于查看
+
     def __str__(self):
         return self.question_text
     # 上面的__str__是python的自带方法,下面使我们自己创建的方法
+
     def was_published_recently(self):
         return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
 
@@ -29,6 +31,10 @@ class Choice(models.Model):
     choice_text = models.CharField(max_length=200)
     # IntegerField函数设置票数为整形,传入默认参数为0
     votes = models.IntegerField(default=0)
+
     # 返回choice_text的字符串表示
+
     def __str__(self):
         return self.choice_text
+
+
