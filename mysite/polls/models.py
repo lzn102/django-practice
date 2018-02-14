@@ -20,7 +20,16 @@ class Question(models.Model):
     # 上面的__str__是python的自带方法,下面使我们自己创建的方法
 
     def was_published_recently(self):
-        return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
+        # 判断创建问题的时间是否比时区时间的前一天早(有测试bug)
+        # return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
+        # 判断创建问题的时间是否早于当前时区的前一天,并且晚于当前时区时间(修复测试bug)
+        now = timezone.now()
+        return now - datetime.timedelta(days=1) <= self.pub_date <= now
+
+    # 设置admin页面 was_published_recently 的排列问题
+    was_published_recently.admin_order_field = 'pub_date'
+    was_published_recently.boolean = True
+    was_published_recently.short_description = 'Published recently?'
 
 
 # 创建投票所用的选项类

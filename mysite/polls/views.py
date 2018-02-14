@@ -15,6 +15,9 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 # 从Django视图模块导入一种通用视图的函数
 from django.views import generic
+# 导入时区模块验证问题是否发布在未来
+from django.utils import timezone
+
 
 # Create your views here.
 
@@ -82,13 +85,19 @@ class IndexView(generic.ListView):
 
     def get_queryset(self):
         # 定义查询集只返回五个问题
-        return Question.objects.order_by('-pub_date')[:5]
+        # return Question.objects.order_by('-pub_date')[:5]
+        # 筛选出五个创建时间早于现在的问题
+        return Question.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')[:5]
 
 
 class DetailView(generic.DetailView):
     # 需指定用到的模型名称
     model = Question
     template_name = 'polls/detail.html'
+
+    # 筛选出早于当前时间创建的问题,避免用户猜出url访问未来的问题内容
+    def get_queryset(self):
+        return Question.objects.filter(pub_date__lte=timezone.now())
 
 
 class ResultsView(generic.DetailView):
